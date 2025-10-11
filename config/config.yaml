@@ -1,0 +1,6 @@
+# Fichier de configuration global
+chemin_donnees_brutes: data/raw/transactions.csv
+chemin_donnees_nettoyees: data/interim/cleaned.csv
+chemin_rfm: models/rfm_segments.csv
+chemin_regles: models/association_rules.csv
+n_clusters_rfm: 5
