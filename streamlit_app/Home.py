@@ -1,11 +1,14 @@
 """
 Page d'accueil de l'application Streamlit.
 """
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import streamlit as st
 import pandas as pd
 from pathlib import Path
 from datetime import datetime, timedelta
+import openpyxl
 
 from src.utils import load_config
 from src.visualization import (
