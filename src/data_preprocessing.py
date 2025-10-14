@@ -6,7 +6,7 @@ import pandas as pd
 import logging
 from typing import Dict, Any
 from datetime import datetime
-from .utils import save_dataframe
+from src.utils import save_dataframe
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ def clean_data(config: Dict[str, Any]) -> pd.DataFrame:
     
     try:
         # Charger les données brutes
-        df = pd.read_csv(config["paths"]["raw_data"])
+        df = pd.read_excel(config["paths"]["raw_data"])
         initial_shape = df.shape
         logger.info(f"Données chargées: {initial_shape[0]} lignes, {initial_shape[1]} colonnes")
         

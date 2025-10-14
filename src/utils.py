@@ -9,22 +9,28 @@ import pandas as pd
 from datetime import datetime
 from typing import Dict, Any
 
-def load_config(path: str = "config/config.yaml") -> Dict[str, Any]:
+import os
+import yaml
+
+def load_config(path="config/config.yaml"):
     """
     Charge la configuration YAML et renvoie un dictionnaire Python.
-    
-    Args:
-        path (str): Chemin vers le fichier de configuration
-        
-    Returns:
-        Dict[str, Any]: Configuration sous forme de dictionnaire
+    Résout automatiquement le chemin absolu pour éviter les erreurs liées au répertoire courant.
     """
     try:
-        with open(path, 'r', encoding='utf-8') as file:
+        # Résoudre le chemin absolu vers le projet racine
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        config_path = os.path.join(base_dir, path)
+
+        if not os.path.exists(config_path):
+            raise FileNotFoundError(f"Le fichier de configuration est introuvable : {config_path}")
+
+        with open(config_path, "r", encoding="utf-8") as file:
             return yaml.safe_load(file)
+
     except Exception as e:
-        logging.error(f"Erreur lors du chargement de la configuration: {str(e)}")
-        raise
+        raise RuntimeError(f"Erreur lors du chargement du fichier de configuration : {e}")
+
 
 def setup_logger(name: str = "project_logger", log_path: str = "logs/project.log") -> logging.Logger:
     """

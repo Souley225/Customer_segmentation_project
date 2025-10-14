@@ -8,7 +8,7 @@ from mlxtend.frequent_patterns import apriori, fpgrowth, association_rules
 import networkx as nx
 import logging
 from typing import Dict, Any, Tuple, List
-from .utils import save_dataframe
+from src.utils import save_dataframe
 
 logger = logging.getLogger(__name__)
 

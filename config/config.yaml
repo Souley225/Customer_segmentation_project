@@ -1,7 +1,7 @@
 # Configuration du projet de segmentation client
 
 paths:
-  raw_data: "data/raw/Online_Retail.csv"
+  raw_data: "data/raw/Online_ Retail.xlsx"
   processed_data: "data/processed/clean_data.csv"
   rfm_output: "data/processed/rfm_segments.csv"
   association_rules: "data/processed/association_rules.csv"
