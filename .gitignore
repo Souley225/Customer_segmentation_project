@@ -1,37 +1,86 @@
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*.so
-
-# Virtual environment
+# ===============================
+# Ignorer les environnements virtuels
+# ===============================
+.venv/
 venv/
 env/
 
-# Distribution / packaging
+# ===============================
+# Ignorer les fichiers temporaires de Python
+# ===============================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ===============================
+# Ignorer les fichiers de configuration locaux
+# ===============================
+*.env
+*.local
+config/local_*.yaml
+
+# ===============================
+# Ignorer les données brutes et fichiers volumineux
+# ===============================
+data/raw/
+data/tmp/
+*.csv
+*.xlsx
+*.xls
+*.parquet
+*.pkl
+*.joblib
+
+# ===============================
+# Ignorer les modèles entraînés
+# ===============================
+models/
+*.pkl
+*.h5
+*.pt
+*.model
+
+# ===============================
+# Ignorer les notebooks temporaires
+# ===============================
+.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+
+# ===============================
+# Ignorer les fichiers de logs et outputs
+# ===============================
+logs/
+*.log
+output/
+reports/
+*.pdf
+*.html
+
+# ===============================
+# Ignorer les fichiers générés par Streamlit
+# ===============================
+.streamlit/
+.streamlit/config.toml
+.streamlit/secrets.toml
+
+# ===============================
+# Ignorer les fichiers système et IDE
+# ===============================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ===============================
+# Ignorer les fichiers d’installation
+# ===============================
 build/
 dist/
 *.egg-info/
 
-# Jupyter Notebook checkpoints
-.ipynb_checkpoints/
-
-# VS Code settings
-.vscode/
-
-# MacOS files
-.DS_Store
-
-# Windows files
-Thumbs.db
-
-# Logs
-*.log
-
-# Environment variables
-.env
-
-# Node modules (if using Node.js)
-node_modules/
-
-# Ignore CSV files
-*.csv
+# ===============================
+# Ignorer les fichiers de tests
+# ===============================
+pytest_cache/
+.coverage
+htmlcov/

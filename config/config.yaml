@@ -1,6 +1,52 @@
-# Fichier de configuration global
-chemin_donnees_brutes: data/raw/transactions.csv
-chemin_donnees_nettoyees: data/interim/cleaned.csv
-chemin_rfm: models/rfm_segments.csv
-chemin_regles: models/association_rules.csv
-n_clusters_rfm: 5
+# Configuration du projet de segmentation client
+
+paths:
+  raw_data: "data/raw/Online_Retail.csv"
+  processed_data: "data/processed/clean_data.csv"
+  rfm_output: "data/processed/rfm_segments.csv"
+  association_rules: "data/processed/association_rules.csv"
+  recommendations: "data/processed/recommendations.csv"
+  models_dir: "models/"
+  logs_dir: "logs/"
+
+rfm:
+  recency_col: "InvoiceDate"
+  frequency_col: "InvoiceNo"
+  monetary_col: "TotalPrice"
+  customer_id_col: "CustomerID"
+  reference_date: "2011-12-10"
+  normalize: True
+  n_clusters: 5
+  clustering_method: "kmeans"
+  random_state: 42
+
+basket_analysis:
+  invoice_col: "InvoiceNo"
+  product_col: "Description"
+  quantity_col: "Quantity"
+  min_support: 0.02
+  min_confidence: 0.3
+  min_lift: 1.2
+  max_len: 3
+  algorithm: "apriori"
+
+recommendation:
+  n_recommendations: 5
+  use_association_rules: True
+  use_rfm_similarity: True
+
+visualization:
+  theme: "light"
+  palette: "viridis"
+  figsize: [10, 6]
+  custom_colors:
+    primary: "#1f77b4"
+    secondary: "#ff7f0e"
+    warning: "#d62728"
+    success: "#2ca02c"
+
+streamlit:
+  page_title: "Tableau de bord des Insights Clients"
+  logo_path: "assets/logo.png"
+  currency: "€"
+  language: "fr"

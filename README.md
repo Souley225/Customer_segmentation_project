@@ -1,187 +1,143 @@
-# 🧠 Projet Data Science : Segmentation Client et Recommandation Produit
+# Projet de Segmentation Client et Recommandation Produit
 
-## 🌟 Objectif du projet
+## Description
+Application d'analyse client combinant segmentation RFM et analyse de panier pour fournir des insights commerciaux via une interface Streamlit.
 
-L'objectif de ce projet est de construire **une application complète de segmentation client et de recommandation produits**, combinant deux approches de data science :
+## Fonctionnalités
+- Segmentation RFM des clients
+- Analyse des associations de produits
+- Recommandations personnalisées
+- Dashboard interactif avec Streamlit
+- Export des données et visualisations
 
-1. **Segmentation RFM (Recency, Frequency, Monetary)** pour identifier les profils de clients selon leur comportement d'achat.
-2. **Analyse des paniers (Market Basket Analysis)** pour détecter les associations de produits et proposer des **recommandations de cross-sell / upsell**.
-
-Ce projet se veut **reproductible et industrialisable**, avec une architecture modulaire, un code clair et commenté en français, et une interface utilisateur via **Streamlit** pour la mise en valeur des résultats.
-
----
-
-## 🧹 Architecture du projet
-
+## Structure du projet
 ```
-customer_analytics_project/
-│
+customer_segmentation_project/
 ├── config/
-│   └── config.yaml                 # Fichier de configuration global (chemins, seuils, paramètres)
-│
+│   └── config.yaml
 ├── data/
-│   ├── raw/                        # Données brutes (ex: Online Retail UCI)
-│   ├── interim/                    # Données intermédiaires (nettoyées partiellement)
-│   └── processed/                  # Données prêtes pour la modélisation (RFM + règles)
-│
-├── notebooks/
-│   ├── 01_data_cleaning.ipynb      # Nettoyage et préparation des données
-│   ├── 02_rfm_segmentation.ipynb   # Calcul et visualisation de la segmentation RFM
-│   ├── 03_market_basket_analysis.ipynb # Règles d'association (Apriori)
-│   └── 04_dashboard_design.ipynb   # Tests et prototypage du dashboard Streamlit
-│
-├── src/
-│   ├── data_cleaning.py            # Script de nettoyage complet (automatisé)
-│   ├── rfm_segmentation.py         # Calcul des scores et classification RFM
-│   ├── basket_analysis.py          # Génération des règles d'association
-│   ├── recommendation.py           # Système de recommandation (cross-sell / upsell)
-│   ├── visualization.py            # Graphiques interactifs
-│   └── utils.py                    # Fonctions utilitaires (logs, config, etc.)
-│
-├── app/
-│   ├── streamlit_app.py            # Application Streamlit principale
-│   ├── components/                 # Widgets réutilisables
-│   └── assets/                     # Images, logos, CSS
-│
+│   ├── raw/
+│   └── processed/
 ├── models/
-│   ├── rfm_segments.csv            # Segmentation finale
-│   ├── association_rules.csv       # Règles d'association extraites
-│   └── metadata.json               # Informations sur les versions et hyperparamètres
-│
-├── reports/
-│   └── figures/                    # Graphiques et visualisations
-│
-├── requirements.txt                # Dépendances Python
-├── README.md                       # Présent document
-└── app.py                          # Point d'entrée (redirection vers Streamlit)
+├── logs/
+├── src/
+│   ├── utils.py
+│   ├── data_preprocessing.py
+│   ├── rfm_analysis.py
+│   ├── basket_analysis.py
+│   ├── recommendations.py
+│   ├── visualization.py
+│   └── main.py
+├── streamlit_app/
+│   ├── Home.py
+│   └── pages/
+│       ├── 02_Segmentation.py
+│       ├── 03_Basket_Analysis.py
+│       └── 04_Customer_View.py
+└── tests/
 ```
 
----
+## Prérequis
+- Python 3.11
+- Packages requis listés dans `requirements.txt`
 
-## ⚙️ 1. Préparation et configuration
+## Installation
 
-Avant de commencer :
-
+1. Cloner le dépôt :
 ```bash
-# Créer et activer un environnement virtuel
-python -m venv .venv
-.venv\Scripts\activate      # (Windows)
-source .venv/bin/activate   # (Linux / macOS)
+git clone https://github.com/votre-username/customer_segmentation_project.git
+cd customer_segmentation_project
+```
 
-# Installer les dépendances
+2. Créer un environnement virtuel :
+```bash
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate     # Windows
+```
+
+3. Installer les dépendances :
+```bash
 pip install -r requirements.txt
 ```
 
-Fichier `requirements.txt` minimal :
+4. Préparer les données :
+- Placer le fichier `online_retail.csv` dans `data/raw/`
+- Ajuster les paramètres dans `config/config.yaml` si nécessaire
 
-```
-pandas
-numpy
-scikit-learn
-mlxtend
-plotly
-streamlit
-pyyaml
-openpyxl
-```
+## Utilisation
 
----
-
-## 🧹 2. Nettoyage des données (`data_cleaning.py`)
-
-### Description
-
-Ce module gère le **prétraitement complet** des données. Il transforme les données brutes (Online Retail) en un jeu propre et exploitable pour les étapes suivantes.
-
-### Étapes principales :
-
-1. Suppression des transactions annulées.
-2. Suppression des lignes avec `CustomerID` manquant.
-3. Filtrage des valeurs négatives.
-4. Normalisation du texte (`lowercase`).
-5. Calcul de `TotalPrice`.
-6. Export du dataset nettoyé.
-
----
-
-## 📊 3. Segmentation RFM (`rfm_segmentation.py`)
-
-### Description
-
-On segmente les clients selon trois indicateurs :
-
-* **Recency** : jours depuis le dernier achat
-* **Frequency** : nombre total de commandes
-* **Monetary** : total dépensé
-
-### Étapes :
-
-1. Calcul des indicateurs.
-2. Attribution de scores 1-5 par quantiles.
-3. Calcul d'un score global `RFM_Score`.
-4. Classification des clients en segments.
-
----
-
-## 🛍️ 4. Analyse des paniers (`basket_analysis.py`)
-
-### Objectif
-
-Identifier les produits les plus fréquemment achetés ensemble via **Apriori** et les **règles d'association**.
-
-### Sorties attendues
-
-* `association_rules.csv` avec : support, confiance, lift, produits.
-
----
-
-## 🔮 5. Recommandations et Dashboard (`streamlit_app.py`)
-
-### Objectif
-
-Créer un tableau de bord interactif permettant :
-
-* d'explorer les segments RFM,
-* d'afficher les produits associés,
-* de recommander des produits à un client ou segment.
-
-### Commande de lancement :
-
+1. Exécuter le pipeline d'analyse :
 ```bash
-streamlit run app/streamlit_app.py
+python src/main.py
 ```
 
-Le dashboard comprendra :
+2. Lancer l'application Streamlit :
+```bash
+cd streamlit_app
+streamlit run Home.py
+```
 
-* Page **Vue d'ensemble** : KPIs et métriques globales.
-* Page **Segmentation RFM** : graphique interactif 3D.
-* Page **Recommandations** : top 10 des associations produits.
+L'application sera accessible à l'adresse : http://localhost:8501
 
----
+## Configuration
 
-## 🚀 6. Déploiement
+Le fichier `config/config.yaml` permet de configurer :
+- Les chemins des fichiers
+- Les paramètres RFM
+- Les seuils d'analyse de panier
+- Les paramètres de recommandation
+- L'apparence de l'interface Streamlit
 
-* **Localement** : via `streamlit run app/streamlit_app.py`
-* **Cloud** : Streamlit Cloud, Render, ou Docker.
+## Structure des données
 
+### Données d'entrée (`online_retail.csv`)
+- InvoiceNo : Numéro de facture
+- StockCode : Code produit
+- Description : Description du produit
+- Quantity : Quantité achetée
+- InvoiceDate : Date de la transaction
+- UnitPrice : Prix unitaire
+- CustomerID : Identifiant client
+- Country : Pays du client
 
----
+### Données générées
+- `clean_data.csv` : Données nettoyées
+- `rfm_segments.csv` : Segmentation RFM
+- `association_rules.csv` : Règles d'association
+- `recommendations.csv` : Recommandations produits
 
-## 🧬 7. Améliorations futures
+## Visualisations disponibles
+1. Vue globale :
+   - KPIs principaux
+   - Distribution RFM
+   - Profils des segments
 
-* Intégrer FastAPI pour exposer une API de recommandation.
-* Ajouter une base SQL (PostgreSQL) pour stocker les segments.
+2. Analyse des segments :
+   - Métriques par segment
+   - Comparaisons inter-segments
+   - Évolution temporelle
 
+3. Analyse de panier :
+   - Graphe des associations
+   - Règles principales
+   - Métriques de support/confiance
 
----
+4. Vue client :
+   - Profil RFM
+   - Historique d'achat
+   - Recommandations personnalisées
 
-## 🌟 Résumé
+## Contribution
+Les contributions sont les bienvenues ! Pour contribuer :
+1. Forker le projet
+2. Créer une branche pour votre fonctionnalité
+3. Commiter vos changements
+4. Pousser vers la branche
+5. Créer une Pull Request
 
-Ce projet illustre le cycle complet d'un projet data orienté business :
+## Licence
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 
-* **Collecte & nettoyage** des données clients
-* **Segmentation RFM** pour comprendre les comportements
-* **Market Basket Analysis** pour détecter les opportunités de crossell et Upsell
-* **Dashboard Streamlit** pour la visualisation et la décision
-
-Ce README peut être suivi pas à pas pour reproduire le projet de A à Z, chaque script étant commenté en français pour servir de guide technique et pédagogique.
+## Contact
+Pour toute question ou suggestion, n'hésitez pas à ouvrir une issue ou à nous contacter directement.
