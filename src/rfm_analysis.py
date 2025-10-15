@@ -1,167 +1,77 @@
 """
-Module d'analyse RFM (Recency, Frequency, Monetary) et segmentation client.
+Module d'analyse RFM
+Calcul des scores et segmentation des clients
 """
-
 import pandas as pd
-import numpy as np
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import KMeans
-from datetime import datetime
-import joblib
-import logging
-from typing import Dict, Any, Tuple
-from .utils import save_dataframe
+from datetime import timedelta
+from src.data_preprocessing import load_config
 
-logger = logging.getLogger(__name__)
-
-def calculate_rfm_metrics(data: pd.DataFrame, config: Dict[str, Any]) -> pd.DataFrame:
-    """
-    Calcule les métriques RFM pour chaque client.
+def calculate_rfm(df, snapshot_date=None):
+    """Calcul des métriques RFM"""
+    config = load_config()
+    if snapshot_date is None:
+        snapshot_date = df['InvoiceDate'].max() + timedelta(days=config['rfm']['snapshot_days'])
     
-    Args:
-        data (pd.DataFrame): Données nettoyées
-        config (Dict[str, Any]): Configuration du projet
-        
-    Returns:
-        pd.DataFrame: DataFrame avec métriques RFM
-    """
-    # Extraire les paramètres de configuration
-    reference_date = datetime.strptime(config["rfm"]["reference_date"], "%Y-%m-%d")
-    
-    # Calculer les métriques RFM par client
-    rfm = data.groupby("CustomerID").agg({
-        config["rfm"]["recency_col"]: lambda x: (reference_date - x.max()).days,
-        config["rfm"]["frequency_col"]: "count",
-        config["rfm"]["monetary_col"]: "sum"
-    }).reset_index()
-    
-    # Renommer les colonnes
-    rfm.columns = ["CustomerID", "Recency", "Frequency", "Monetary"]
-    
+    rfm = df.groupby('CustomerID').agg({
+        'InvoiceDate': lambda x: (snapshot_date - x.max()).days,
+        'InvoiceNo': 'nunique',
+        'TotalPrice': 'sum'
+    }).rename(columns={
+        'InvoiceDate': 'Recency',
+        'InvoiceNo': 'Frequency', 
+        'TotalPrice': 'Monetary'
+    })
     return rfm
 
-def normalize_rfm(rfm_df: pd.DataFrame, config: Dict[str, Any]) -> Tuple[pd.DataFrame, StandardScaler]:
-    """
-    Normalise les métriques RFM si spécifié dans la configuration.
+def score_rfm(rfm):
+    """Calcul des scores RFM (1-5)"""
+    config = load_config()
     
-    Args:
-        rfm_df (pd.DataFrame): DataFrame RFM
-        config (Dict[str, Any]): Configuration
-        
-    Returns:
-        Tuple[pd.DataFrame, StandardScaler]: DataFrame normalisé et scaler
-    """
-    if not config["rfm"]["normalize"]:
-        return rfm_df, None
-        
-    features = ["Recency", "Frequency", "Monetary"]
-    scaler = StandardScaler()
+    # Score Recency (inversé)
+    rfm['R_score'] = pd.qcut(rfm['Recency'], config['rfm']['recency_quantiles'], 
+                           labels=list(range(config['rfm']['recency_quantiles'], 0, -1)))
     
-    # Transformer Recency en valeur positive (plus grand = plus récent)
-    rfm_df["Recency"] = rfm_df["Recency"].max() - rfm_df["Recency"]
+    # Scores Frequency et Monetary
+    rfm['F_score'] = pd.qcut(rfm['Frequency'].rank(method='first'), 
+                           config['rfm']['frequency_quantiles'], 
+                           labels=list(range(1, config['rfm']['frequency_quantiles'] + 1)))
+    rfm['M_score'] = pd.qcut(rfm['Monetary'], config['rfm']['monetary_quantiles'], 
+                           labels=list(range(1, config['rfm']['monetary_quantiles'] + 1)))
     
-    # Normaliser les features
-    rfm_scaled = scaler.fit_transform(rfm_df[features])
-    rfm_normalized = pd.DataFrame(rfm_scaled, columns=features)
-    rfm_normalized["CustomerID"] = rfm_df["CustomerID"]
-    
-    return rfm_normalized, scaler
+    rfm['RFM_score'] = (rfm['R_score'].astype(str) + rfm['F_score'].astype(str) + 
+                       rfm['M_score'].astype(str))
+    return rfm
 
-def perform_clustering(rfm_normalized: pd.DataFrame, config: Dict[str, Any]) -> Tuple[pd.DataFrame, object]:
-    """
-    Applique l'algorithme de clustering sur les données RFM.
-    
-    Args:
-        rfm_normalized (pd.DataFrame): Données RFM normalisées
-        config (Dict[str, Any]): Configuration
-        
-    Returns:
-        Tuple[pd.DataFrame, object]: DataFrame avec clusters et modèle
-    """
-    features = ["Recency", "Frequency", "Monetary"]
-    
-    if config["rfm"]["clustering_method"] == "kmeans":
-        model = KMeans(
-            n_clusters=config["rfm"]["n_clusters"],
-            random_state=config["rfm"]["random_state"]
-        )
+def map_rfm_to_segment(r_score, f_score, m_score):
+    """Mapping des scores RFM vers segments"""
+    if r_score >= 4 and f_score >= 4 and m_score >= 4:
+        return 'Champions'
+    elif r_score >= 2 and f_score >= 3 and m_score >= 3:
+        return 'Clients Fidèles'
+    elif r_score >= 3 and f_score >= 2 and m_score >= 3:
+        return 'Potentiels Fidèles'
+    elif r_score >= 4 and f_score <= 1:
+        return 'Nouveaux Clients'
+    elif r_score <= 1 and f_score >= 4 and m_score >= 4:
+        return 'À Ne Pas Perdre'
+    elif r_score <= 1 and f_score <= 2 and m_score <= 2:
+        return 'Hibernants'
     else:
-        raise ValueError(f"Méthode de clustering non supportée: {config['rfm']['clustering_method']}")
-    
-    # Appliquer le clustering
-    clusters = model.fit_predict(rfm_normalized[features])
-    rfm_normalized["Cluster"] = clusters
-    
-    return rfm_normalized, model
+        return 'Autre'
 
-def label_segments(rfm_with_clusters: pd.DataFrame) -> pd.DataFrame:
-    """
-    Attribue des labels aux segments selon leurs caractéristiques RFM.
+def compute_segment_evolution(df):
+    """Évolution des segments dans le temps"""
+    quarters = pd.date_range(df['InvoiceDate'].min(), df['InvoiceDate'].max(), freq='Q')
+    segments_dict = {}
     
-    Args:
-        rfm_with_clusters (pd.DataFrame): DataFrame RFM avec clusters
-        
-    Returns:
-        pd.DataFrame: DataFrame avec labels de segments
-    """
-    # Calculer les moyennes par cluster
-    cluster_means = rfm_with_clusters.groupby("Cluster")[["Recency", "Frequency", "Monetary"]].mean()
+    for q in quarters:
+        rfm_q = calculate_rfm(df, q + timedelta(days=1))
+        if not rfm_q.empty:
+            rfm_q = score_rfm(rfm_q)
+            rfm_q['Segment'] = rfm_q.apply(
+                lambda row: map_rfm_to_segment(int(row['R_score']), int(row['F_score']), int(row['M_score'])), 
+                axis=1
+            )
+            segments_dict[q.strftime('%Y-%m')] = rfm_q['Segment'].value_counts()
     
-    # Créer un mapping des labels
-    labels = {}
-    for cluster in cluster_means.index:
-        means = cluster_means.loc[cluster]
-        
-        if means["Monetary"] > cluster_means["Monetary"].median():
-            if means["Recency"] > cluster_means["Recency"].median():
-                labels[cluster] = "Champions"
-            else:
-                labels[cluster] = "Clients fidèles"
-        else:
-            if means["Recency"] > cluster_means["Recency"].median():
-                labels[cluster] = "Clients potentiels"
-            else:
-                labels[cluster] = "Clients à risque"
-    
-    rfm_with_clusters["Segment"] = rfm_with_clusters["Cluster"].map(labels)
-    return rfm_with_clusters
-
-def run_rfm_segmentation(data: pd.DataFrame, config: Dict[str, Any]) -> Tuple[pd.DataFrame, object]:
-    """
-    Exécute la segmentation RFM complète.
-    
-    Args:
-        data (pd.DataFrame): Données nettoyées
-        config (Dict[str, Any]): Configuration
-        
-    Returns:
-        Tuple[pd.DataFrame, object]: DataFrame segmenté et modèle
-    """
-    logger.info("Début de la segmentation RFM")
-    
-    try:
-        # Calculer métriques RFM
-        rfm_df = calculate_rfm_metrics(data, config)
-        logger.info(f"Métriques RFM calculées pour {len(rfm_df)} clients")
-        
-        # Normaliser
-        rfm_normalized, scaler = normalize_rfm(rfm_df, config)
-        
-        # Clustering
-        rfm_clustered, model = perform_clustering(rfm_normalized, config)
-        
-        # Labels
-        final_rfm = label_segments(rfm_clustered)
-        
-        # Sauvegarder
-        save_dataframe(final_rfm, config["paths"]["rfm_output"])
-        joblib.dump(model, f"{config['paths']['models_dir']}/rfm_model.pkl")
-        if scaler:
-            joblib.dump(scaler, f"{config['paths']['models_dir']}/rfm_scaler.pkl")
-        
-        logger.info("Segmentation RFM terminée avec succès")
-        return final_rfm, model
-        
-    except Exception as e:
-        logger.error(f"Erreur lors de la segmentation RFM: {str(e)}")
-        raise
+    return pd.DataFrame(segments_dict).T.fillna(0)
