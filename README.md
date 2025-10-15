@@ -1,4 +1,13 @@
 # Projet de Segmentation Client et Recommandation Produit
+## Contexte et Objectif
+
+Ce projet a pour but d'analyser le comportement des clients (achats, fréquence, montant) afin de réaliser une segmentation via la méthode RFM (Récence, Fréquence, Montant), puis d'utiliser l'analyse de panier (association rules) pour recommander des produits pertinents. Une interface Streamlit permet d'explorer les résultats de façon interactive.
+
+##L'objectif est double :
+
+Comprendre les profils clients et identifier les plus précieux (fidèles, gros acheteurs, etc.)
+
+Générer des recommandations produits basées sur leurs habitudes d'achat
 
 ## Description
 Application d'analyse client combinant segmentation RFM et analyse de panier pour fournir des insights commerciaux via une interface Streamlit.
