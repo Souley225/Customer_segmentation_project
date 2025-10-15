@@ -29,12 +29,8 @@ customer_segmentation_project/
 │   ├── visualization.py
 │   └── main.py
 ├── streamlit_app/
-│   ├── Home.py
-│   └── pages/
-│       ├── 02_Segmentation.py
-│       ├── 03_Basket_Analysis.py
-│       └── 04_Customer_View.py
-└── tests/
+│   ├── app.py
+
 ```
 
 ## Prérequis
@@ -45,7 +41,7 @@ customer_segmentation_project/
 
 1. Cloner le dépôt :
 ```bash
-git clone https://github.com/votre-username/customer_segmentation_project.git
+git clone https://github.com/Souley225/customer_segmentation_project.git
 cd customer_segmentation_project
 ```
 
@@ -74,8 +70,7 @@ python src/main.py
 
 2. Lancer l'application Streamlit :
 ```bash
-cd streamlit_app
-streamlit run Home.py
+streamlit run app.py
 ```
 
 L'application sera accessible à l'adresse : http://localhost:8501
