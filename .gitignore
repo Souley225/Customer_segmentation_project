@@ -39,7 +39,7 @@ models/
 *.h5
 *.pt
 *.model
-
+*.claude
 # ===============================
 # Ignorer les notebooks temporaires
 # ===============================
