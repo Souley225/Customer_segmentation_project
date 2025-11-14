@@ -27,11 +27,19 @@ customer_segmentation_project/
 │   ├── rfm_analysis.py
 │   ├── basket_analysis.py
 │   ├── recommendations.py
+<<<<<<< HEAD
 │   ├── metrics.py
 │   └── visualization.py
 ├── app.py
 ├── requirements.txt
 └── README.md
+=======
+│   ├── visualization.py
+│   └── main.py
+├── streamlit_app/
+│   ├── app.py
+
+>>>>>>> 12e3ca67ed1d603e46d7cc9110d33d9ca8f67917
 ```
 
 ## Prérequis
@@ -42,7 +50,7 @@ customer_segmentation_project/
 
 1. Cloner le dépôt :
 ```bash
-git clone https://github.com/votre-username/customer_segmentation_project.git
+git clone https://github.com/Souley225/customer_segmentation_project.git
 cd customer_segmentation_project
 ```
 
@@ -65,7 +73,14 @@ Lancer l'application Streamlit :
 streamlit run app.py
 ```
 
+<<<<<<< HEAD
 L'application sera accessible à : http://localhost:8501
+=======
+2. Lancer l'application Streamlit :
+```bash
+streamlit run app.py
+```
+>>>>>>> 12e3ca67ed1d603e46d7cc9110d33d9ca8f67917
 
 ## Déploiement sur Render
 
@@ -175,4 +190,8 @@ L'application est optimisée pour le déploiement cloud :
 Ce projet est sous licence MIT.
 
 ## Contact
+<<<<<<< HEAD
 Pour questions ou suggestions, ouvrir une issue sur le repository GitHub.
+=======
+Pour toute question ou suggestion, n'hésitez pas à ouvrir une issue ou à nous contacter directement.
+>>>>>>> 12e3ca67ed1d603e46d7cc9110d33d9ca8f67917
