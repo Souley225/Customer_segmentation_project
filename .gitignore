@@ -59,9 +59,8 @@ reports/
 # ===============================
 # Ignorer les fichiers générés par Streamlit
 # ===============================
-.streamlit/
-.streamlit/config.toml
 .streamlit/secrets.toml
+# Garder .streamlit/config.toml pour le déploiement
 
 # ===============================
 # Ignorer les fichiers système et IDE

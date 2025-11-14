@@ -4,7 +4,7 @@ Extraction des règles d'ASSOCIATION OPTIMISÉE
 """
 import pandas as pd
 from mlxtend.frequent_patterns import apriori, association_rules
-from src.data_preprocessing import load_config
+from src.utils import load_config
 
 def perform_basket_analysis(df):
     """Analyse complète du panier OPTIMISÉE"""

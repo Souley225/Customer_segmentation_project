@@ -4,44 +4,41 @@
 Application d'analyse client combinant segmentation RFM et analyse de panier pour fournir des insights commerciaux via une interface Streamlit.
 
 ## Fonctionnalités
-- Segmentation RFM des clients
-- Analyse des associations de produits
-- Recommandations personnalisées
-- Dashboard interactif avec Streamlit
-- Export des données et visualisations
+- **Vue Globale des Segments**: CA total, panier moyen, nombre de commandes, top 5 items
+- **Vue par Segment**: métriques détaillées par segment avec filtre
+- **Recommandations Produit**: recommandations personnalisées avec lift pour chaque client
+- **Segmentation RFM**: classification automatique des clients
+- **Analyse de Panier**: règles d'association entre produits
 
 ## Structure du projet
 ```
 customer_segmentation_project/
+├── .streamlit/
+│   └── config.toml
 ├── config/
-│   └── config.yaml
+│   ├── config.yaml
+│   └── render.yaml
 ├── data/
-│   ├── raw/
 │   └── processed/
-├── models/
-├── logs/
 ├── src/
+│   ├── __init__.py
 │   ├── utils.py
 │   ├── data_preprocessing.py
 │   ├── rfm_analysis.py
 │   ├── basket_analysis.py
 │   ├── recommendations.py
-│   ├── visualization.py
-│   └── main.py
-├── streamlit_app/
-│   ├── Home.py
-│   └── pages/
-│       ├── 02_Segmentation.py
-│       ├── 03_Basket_Analysis.py
-│       └── 04_Customer_View.py
-└── tests/
+│   ├── metrics.py
+│   └── visualization.py
+├── app.py
+├── requirements.txt
+└── README.md
 ```
 
 ## Prérequis
 - Python 3.11
-- Packages requis listés dans `requirements.txt`
+- Packages listés dans `requirements.txt`
 
-## Installation
+## Installation Locale
 
 1. Cloner le dépôt :
 ```bash
@@ -51,9 +48,9 @@ cd customer_segmentation_project
 
 2. Créer un environnement virtuel :
 ```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate     # Windows
+python -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+.venv\Scripts\activate     # Windows
 ```
 
 3. Installer les dépendances :
@@ -61,83 +58,121 @@ venv\Scripts\activate     # Windows
 pip install -r requirements.txt
 ```
 
-4. Préparer les données :
-- Placer le fichier `online_retail.csv` dans `data/raw/`
-- Ajuster les paramètres dans `config/config.yaml` si nécessaire
+## Utilisation Locale
 
-## Utilisation
-
-1. Exécuter le pipeline d'analyse :
+Lancer l'application Streamlit :
 ```bash
-python src/main.py
+streamlit run app.py
 ```
 
-2. Lancer l'application Streamlit :
-```bash
-cd streamlit_app
-streamlit run Home.py
-```
+L'application sera accessible à : http://localhost:8501
 
-L'application sera accessible à l'adresse : http://localhost:8501
+## Déploiement sur Render
+
+### Méthode 1: Via le Dashboard Render
+
+1. Créer un compte sur [Render](https://render.com)
+
+2. Créer un nouveau Web Service :
+   - Cliquer sur "New +" puis "Web Service"
+   - Connecter votre repository GitHub
+   - Sélectionner le repository du projet
+
+3. Configuration du service :
+   - **Name**: customer-segmentation-app (ou votre choix)
+   - **Environment**: Python 3
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `streamlit run app.py --server.port $PORT --server.address 0.0.0.0`
+   - **Instance Type**: Free (ou votre choix)
+
+4. Variables d'environnement (optionnel) :
+   - `PYTHON_VERSION`: 3.11.5
+
+5. Cliquer sur "Create Web Service"
+
+Le déploiement prendra quelques minutes. L'application sera accessible via l'URL fournie par Render.
+
+### Méthode 2: Via render.yaml
+
+Le fichier `config/render.yaml` est déjà configuré. Pour déployer :
+
+1. Pousser votre code sur GitHub
+2. Connecter votre repository à Render
+3. Render détectera automatiquement le fichier `render.yaml` et configurera le service
+
+### Notes importantes pour le déploiement
+
+- Les données sont chargées automatiquement depuis l'URL configurée dans `config/config.yaml`
+- Aucune variable d'environnement secrète n'est requise
+- Le fichier `.streamlit/config.toml` configure l'interface Streamlit
+- L'application est optimisée pour fonctionner avec les ressources limitées de Render Free Tier
 
 ## Configuration
 
 Le fichier `config/config.yaml` permet de configurer :
-- Les chemins des fichiers
-- Les paramètres RFM
-- Les seuils d'analyse de panier
-- Les paramètres de recommandation
-- L'apparence de l'interface Streamlit
+- **Source des données**: URL du fichier Excel Online Retail
+- **Paramètres RFM**: quantiles pour Recency, Frequency, Monetary
+- **Analyse de panier**: seuils de support, confidence, lift
+- **Recommandations**: nombre de recommandations par source
+- **Visualisation**: limites d'affichage
 
-## Structure des données
+## Vues de l'Application
 
-### Données d'entrée (`online_retail.csv`)
-- InvoiceNo : Numéro de facture
-- StockCode : Code produit
-- Description : Description du produit
-- Quantity : Quantité achetée
-- InvoiceDate : Date de la transaction
-- UnitPrice : Prix unitaire
-- CustomerID : Identifiant client
-- Country : Pays du client
+### 1. Vue Globale des Segments
+- CA total et panier moyen
+- Nombre total de commandes
+- Top 5 items achetés (par CA)
+- Tableau récapitulatif des métriques par segment
+- Graphique de distribution des clients
 
-### Données générées
-- `clean_data.csv` : Données nettoyées
-- `rfm_segments.csv` : Segmentation RFM
-- `association_rules.csv` : Règles d'association
-- `recommendations.csv` : Recommandations produits
+### 2. Vue par Segment
+- Sélection du segment via dropdown
+- Métriques spécifiques au segment : CA, panier moyen, nombre de commandes
+- Top 5 items du segment
+- Profil RFM moyen du segment
 
-## Visualisations disponibles
-1. Vue globale :
-   - KPIs principaux
-   - Distribution RFM
-   - Profils des segments
+### 3. Recommandations Produit
+- Sélection du client via dropdown
+- Informations client (segment, RFM)
+- Historique d'achats détaillé
+- Recommandations personnalisées avec :
+  - Lift (pour règles d'association)
+  - Confidence
+  - Source de la recommandation (Association ou Segment)
 
-2. Analyse des segments :
-   - Métriques par segment
-   - Comparaisons inter-segments
-   - Évolution temporelle
+## Structure des Données
 
-3. Analyse de panier :
-   - Graphe des associations
-   - Règles principales
-   - Métriques de support/confiance
+### Source
+Les données sont chargées depuis : [UCI Machine Learning Repository - Online Retail Dataset](https://archive.ics.uci.edu/ml/machine-learning-databases/00352/Online%20Retail.xlsx)
 
-4. Vue client :
-   - Profil RFM
-   - Historique d'achat
-   - Recommandations personnalisées
+### Colonnes utilisées
+- **InvoiceNo**: Numéro de facture
+- **InvoiceDate**: Date de transaction
+- **Description**: Description du produit
+- **Quantity**: Quantité achetée
+- **UnitPrice**: Prix unitaire
+- **CustomerID**: Identifiant client
+- **TotalPrice**: Calculé (Quantity × UnitPrice)
 
-## Contribution
-Les contributions sont les bienvenues ! Pour contribuer :
-1. Forker le projet
-2. Créer une branche pour votre fonctionnalité
-3. Commiter vos changements
-4. Pousser vers la branche
-5. Créer une Pull Request
+## Technologies Utilisées
+
+- **Streamlit**: Framework web pour l'application
+- **Pandas**: Manipulation des données
+- **Scikit-learn**: Segmentation RFM
+- **MLxtend**: Analyse de panier (Apriori, règles d'association)
+- **Plotly**: Visualisations interactives
+- **NetworkX**: Graphes d'association
+
+## Performance et Optimisation
+
+L'application est optimisée pour le déploiement cloud :
+- Échantillonnage des données pour l'analyse de panier
+- Cache Streamlit pour les calculs lourds
+- Filtrage des règles d'association pour limiter la mémoire
+- Chargement différé des visualisations
 
 ## Licence
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+Ce projet est sous licence MIT.
 
 ## Contact
-Pour toute question ou suggestion, n'hésitez pas à ouvrir une issue ou à nous contacter directement.
+Pour questions ou suggestions, ouvrir une issue sur le repository GitHub.
