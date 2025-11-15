@@ -4,7 +4,7 @@ Calcul des scores et segmentation des clients
 """
 import pandas as pd
 from datetime import timedelta
-from src.data_preprocessing import load_config
+from src.utils import load_config
 
 def calculate_rfm(df, snapshot_date=None):
     """Calcul des métriques RFM"""

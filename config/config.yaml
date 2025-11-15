@@ -2,6 +2,7 @@ data:
   source_url: "https://archive.ics.uci.edu/ml/machine-learning-databases/00352/Online%20Retail.xlsx"
   min_quantity: 0
   drop_na_customer: true
+  max_rows: 50000  # ✅ Limite pour limiter la mémoire
 
 rfm:
   snapshot_days: 1
@@ -13,10 +14,12 @@ rfm:
     loyal: [2, 3, 3]
 
 basket_analysis:
-  min_support: 0.01
-  min_confidence: 0.1
-  min_lift: 1.0
-  max_rules: 100
+  min_support: 0.05      # ✅ 5x plus strict
+  min_confidence: 0.3    # ✅ 3x plus strict
+  min_lift: 1.2          # ✅ Plus sélectif
+  max_rules: 50          # ✅ Limité
+  sample_invoices: 1000  # ✅ Échantillon
+  sample_products: 500   # ✅ Échantillon
 
 recommendations:
   top_n_segment: 10
