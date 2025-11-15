@@ -1,5 +1,9 @@
 # Projet de Segmentation Client et Recommandation Produit
 
+## 🚀 Application Déployée
+
+**Lien de l'application en ligne**: [https://customer-segmentation-project-591h.onrender.com/](https://customer-segmentation-project-591h.onrender.com/)
+
 ## Description
 Application d'analyse client combinant segmentation RFM et analyse de panier pour fournir des insights commerciaux via une interface Streamlit.
 
@@ -27,19 +31,11 @@ customer_segmentation_project/
 │   ├── rfm_analysis.py
 │   ├── basket_analysis.py
 │   ├── recommendations.py
-<<<<<<< HEAD
 │   ├── metrics.py
 │   └── visualization.py
 ├── app.py
 ├── requirements.txt
 └── README.md
-=======
-│   ├── visualization.py
-│   └── main.py
-├── streamlit_app/
-│   ├── app.py
-
->>>>>>> 12e3ca67ed1d603e46d7cc9110d33d9ca8f67917
 ```
 
 ## Prérequis
@@ -73,14 +69,7 @@ Lancer l'application Streamlit :
 streamlit run app.py
 ```
 
-<<<<<<< HEAD
 L'application sera accessible à : http://localhost:8501
-=======
-2. Lancer l'application Streamlit :
-```bash
-streamlit run app.py
-```
->>>>>>> 12e3ca67ed1d603e46d7cc9110d33d9ca8f67917
 
 ## Déploiement sur Render
 
@@ -101,7 +90,7 @@ streamlit run app.py
    - **Instance Type**: Free (ou votre choix)
 
 4. Variables d'environnement (optionnel) :
-   - `PYTHON_VERSION`: 3.11.5
+   - `PYTHON_VERSION`: 3.11.9
 
 5. Cliquer sur "Create Web Service"
 
@@ -109,7 +98,7 @@ Le déploiement prendra quelques minutes. L'application sera accessible via l'UR
 
 ### Méthode 2: Via render.yaml
 
-Le fichier `config/render.yaml` est déjà configuré. Pour déployer :
+Le fichier `render.yaml` est déjà configuré à la racine du projet. Pour déployer :
 
 1. Pousser votre code sur GitHub
 2. Connecter votre repository à Render
@@ -190,8 +179,4 @@ L'application est optimisée pour le déploiement cloud :
 Ce projet est sous licence MIT.
 
 ## Contact
-<<<<<<< HEAD
 Pour questions ou suggestions, ouvrir une issue sur le repository GitHub.
-=======
-Pour toute question ou suggestion, n'hésitez pas à ouvrir une issue ou à nous contacter directement.
->>>>>>> 12e3ca67ed1d603e46d7cc9110d33d9ca8f67917
