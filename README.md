@@ -1,4 +1,13 @@
 # Projet de Segmentation Client et Recommandation Produit
+## Contexte et Objectif
+
+Ce projet a pour but d'analyser le comportement des clients (achats, fréquence, montant) afin de réaliser une segmentation via la méthode RFM (Récence, Fréquence, Montant), puis d'utiliser l'analyse de panier (association rules) pour recommander des produits pertinents. Une interface Streamlit permet d'explorer les résultats de façon interactive.
+
+ L'objectif est double :
+
+Comprendre les profils clients et identifier les plus précieux (fidèles, gros acheteurs, etc.)
+
+Générer des recommandations produits basées sur leurs habitudes d'achat
 
 ## 🚀 Application Déployée
 
@@ -69,42 +78,10 @@ Lancer l'application Streamlit :
 streamlit run app.py
 ```
 
-L'application sera accessible à : http://localhost:8501
-
-## Déploiement sur Render
-
-### Méthode 1: Via le Dashboard Render
-
-1. Créer un compte sur [Render](https://render.com)
-
-2. Créer un nouveau Web Service :
-   - Cliquer sur "New +" puis "Web Service"
-   - Connecter votre repository GitHub
-   - Sélectionner le repository du projet
-
-3. Configuration du service :
-   - **Name**: customer-segmentation-app (ou votre choix)
-   - **Environment**: Python 3
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `streamlit run app.py --server.port $PORT --server.address 0.0.0.0`
-   - **Instance Type**: Free (ou votre choix)
-
-4. Variables d'environnement (optionnel) :
-   - `PYTHON_VERSION`: 3.11.9
-
-5. Cliquer sur "Create Web Service"
-
-Le déploiement prendra quelques minutes. L'application sera accessible via l'URL fournie par Render.
-
-### Méthode 2: Via render.yaml
-
-Le fichier `render.yaml` est déjà configuré à la racine du projet. Pour déployer :
-
-1. Pousser votre code sur GitHub
-2. Connecter votre repository à Render
-3. Render détectera automatiquement le fichier `render.yaml` et configurera le service
-
-### Notes importantes pour le déploiement
+2. Lancer l'application Streamlit :
+```bash
+streamlit run app.py
+```
 
 - Les données sont chargées automatiquement depuis l'URL configurée dans `config/config.yaml`
 - Aucune variable d'environnement secrète n'est requise
@@ -180,3 +157,4 @@ Ce projet est sous licence MIT.
 
 ## Contact
 Pour questions ou suggestions, ouvrir une issue sur le repository GitHub.
+Pour toute question ou suggestion, n'hésitez pas à ouvrir une issue ou à nous contacter directement.
