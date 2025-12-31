@@ -17,9 +17,9 @@ def calculate_rfm(df, snapshot_date=None):
         'InvoiceNo': 'nunique',
         'TotalPrice': 'sum'
     }).rename(columns={
-        'InvoiceDate': 'Recency',
-        'InvoiceNo': 'Frequency', 
-        'TotalPrice': 'Monetary'
+        'InvoiceDate': 'Récence',
+        'InvoiceNo': 'Fréquence', 
+        'TotalPrice': 'Montant'
     })
     return rfm
 
@@ -27,15 +27,15 @@ def score_rfm(rfm):
     """Calcul des scores RFM (1-5)"""
     config = load_config()
     
-    # Score Recency (inversé)
-    rfm['R_score'] = pd.qcut(rfm['Recency'], config['rfm']['recency_quantiles'], 
+    # Score Récence (inversé)
+    rfm['R_score'] = pd.qcut(rfm['Récence'], config['rfm']['recency_quantiles'], 
                            labels=list(range(config['rfm']['recency_quantiles'], 0, -1)))
     
-    # Scores Frequency et Monetary
-    rfm['F_score'] = pd.qcut(rfm['Frequency'].rank(method='first'), 
+    # Scores Fréquence et Montant
+    rfm['F_score'] = pd.qcut(rfm['Fréquence'].rank(method='first'), 
                            config['rfm']['frequency_quantiles'], 
                            labels=list(range(1, config['rfm']['frequency_quantiles'] + 1)))
-    rfm['M_score'] = pd.qcut(rfm['Monetary'], config['rfm']['monetary_quantiles'], 
+    rfm['M_score'] = pd.qcut(rfm['Montant'], config['rfm']['monetary_quantiles'], 
                            labels=list(range(1, config['rfm']['monetary_quantiles'] + 1)))
     
     rfm['RFM_score'] = (rfm['R_score'].astype(str) + rfm['F_score'].astype(str) + 

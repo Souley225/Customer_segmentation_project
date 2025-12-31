@@ -23,12 +23,12 @@ def create_rfm_pie(rfm):
 
 def create_segment_profiles(rfm):
     """Profils moyens par segment"""
-    profiles = rfm.groupby('Segment')[['Recency', 'Frequency', 'Monetary']].mean().round(2)
+    profiles = rfm.groupby('Segment')[['Récence', 'Fréquence', 'Montant']].mean().round(2)
     st.dataframe(profiles, use_container_width=True)
 
 def create_monetary_box(rfm):
     """Boîtes monétaires"""
-    fig = px.box(rfm, x='Segment', y='Monetary', title='Distribution Monétaire')
+    fig = px.box(rfm, x='Segment', y='Montant', title='Distribution Monétaire')
     st.plotly_chart(fig, use_container_width=True)
 
 def create_evolution_area(evol_df):
