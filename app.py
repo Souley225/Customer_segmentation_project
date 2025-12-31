@@ -147,10 +147,35 @@ st.markdown("""
 # Header
 st.markdown('<p class="main-header">Tableau de Bord Segmentation Client</p>', unsafe_allow_html=True)
 
-# Chargement des données
+# Chargement des données (pré-calculées ou calcul à la volée)
 @st.cache_data
 def load_app_data():
-    """Chargement et préparation des données"""
+    """
+    Chargement des données pré-calculées pour un démarrage rapide.
+    Fallback sur calcul complet si les fichiers n'existent pas.
+    """
+    import os
+    import pickle
+    
+    processed_dir = os.path.join(os.path.dirname(__file__), 'data', 'processed')
+    transactions_path = os.path.join(processed_dir, 'transactions.csv')
+    rfm_path = os.path.join(processed_dir, 'rfm_segments.csv')
+    rules_path = os.path.join(processed_dir, 'association_rules.pkl')
+    
+    # Vérifier si les fichiers pré-calculés existent
+    if all(os.path.exists(p) for p in [transactions_path, rfm_path, rules_path]):
+        # Chargement rapide des données pré-calculées
+        df = pd.read_csv(transactions_path, parse_dates=['InvoiceDate'])
+        rfm = pd.read_csv(rfm_path, index_col='CustomerID')
+        with open(rules_path, 'rb') as f:
+            rules = pickle.load(f)
+        return df, rfm, rules
+    
+    # Fallback: calcul complet (première exécution ou données manquantes)
+    from src.data_preprocessing import load_and_clean_data
+    from src.rfm_analysis import calculate_rfm, score_rfm, map_rfm_to_segment
+    from src.basket_analysis import perform_basket_analysis
+    
     df = load_and_clean_data()
     rfm = calculate_rfm(df)
     rfm_scored = score_rfm(rfm)
