@@ -9,72 +9,91 @@ Comprendre les profils clients et identifier les plus précieux (fidèles, gros 
 
 Générer des recommandations produits basées sur leurs habitudes d'achat
 
-## 🚀 Application Déployée
+[![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)](https://python.org)
+[![Streamlit](https://img.shields.io/badge/Streamlit-App-red?logo=streamlit&logoColor=white)](https://streamlit.io)
+[![Scikit-learn](https://img.shields.io/badge/Scikit--learn-ML-orange?logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-**Lien de l'application en ligne**: [https://customer-segmentation-project-591h.onrender.com/](https://customer-segmentation-project-591h.onrender.com/)
+**Application en ligne**: [customer-segmentation-project-591h.onrender.com](https://customer-segmentation-project-591h.onrender.com/)
 
-## Description
-Application d'analyse client combinant segmentation RFM et analyse de panier pour fournir des insights commerciaux via une interface Streamlit.
+---
+
+## Contexte Business
+
+Solution d'analytics retail transformant les données transactionnelles en insights clients actionnables via segmentation automatisée et recommandations intelligentes.
+
+**Valeur Business:**
+- Identification de la valeur client via scoring RFM
+- Opportunités de cross-sell par analyse de panier
+- Personnalisation data-driven à grande échelle
+
+---
+
+## Approche Technique
+
+| Composant | Méthode | Résultat |
+|-----------|---------|----------|
+| **Segmentation** | Analyse RFM (Récence, Fréquence, Montant) | 4 segments clients |
+| **Règles d'Association** | Algorithme Apriori | Affinités produits avec scores lift |
+| **Recommandations** | Hybride (Association + Segment) | Top-N suggestions personnalisées |
+
+---
 
 ## Fonctionnalités
-- **Vue Globale des Segments**: CA total, panier moyen, nombre de commandes, top 5 items
-- **Vue par Segment**: métriques détaillées par segment avec filtre
-- **Recommandations Produit**: recommandations personnalisées avec lift pour chaque client
-- **Segmentation RFM**: classification automatique des clients
-- **Analyse de Panier**: règles d'association entre produits
 
-## Structure du projet
+- **Dashboard Exécutif** — KPIs: CA, panier moyen, volume commandes, top produits par segment
+- **Analyse par Segment** — Métriques filtrées et profils RFM par segment client
+- **Moteur de Recommandation** — Suggestions par client avec scores de confiance et sources
+
+---
+
+## Stack Technique
+
+| Couche | Technologie |
+|--------|-------------|
+| Frontend | Streamlit |
+| Traitement Données | Pandas |
+| ML/Analytics | Scikit-learn, MLxtend (Apriori) |
+| Visualisation | Plotly, NetworkX |
+| Déploiement | Render |
+
+---
+
+## Source de Données
+
+UCI Machine Learning Repository — [Online Retail Dataset](https://archive.ics.uci.edu/ml/machine-learning-databases/00352/Online%20Retail.xlsx)
+
+**Schéma**: InvoiceNo, InvoiceDate, Description, Quantity, UnitPrice, CustomerID
+
+---
+
+## Structure du Projet
+
 ```
 customer_segmentation_project/
-├── .streamlit/
-│   └── config.toml
-├── config/
-│   ├── config.yaml
-│   └── render.yaml
-├── data/
-│   └── processed/
+├── app.py                  # Application Streamlit
 ├── src/
-│   ├── __init__.py
-│   ├── utils.py
 │   ├── data_preprocessing.py
 │   ├── rfm_analysis.py
 │   ├── basket_analysis.py
 │   ├── recommendations.py
 │   ├── metrics.py
 │   └── visualization.py
-├── app.py
+├── config/
+│   └── config.yaml         # Paramètres
 ├── requirements.txt
-└── README.md
+└── render.yaml              # Config déploiement
 ```
 
-## Prérequis
-- Python 3.11
-- Packages listés dans `requirements.txt`
+---
 
-## Installation Locale
+## Installation Rapide
 
-1. Cloner le dépôt :
 ```bash
 git clone https://github.com/Souley225/customer_segmentation_project.git
 cd customer_segmentation_project
-```
-
-2. Créer un environnement virtuel :
-```bash
-python -m venv .venv
-source .venv/bin/activate  # Linux/Mac
-.venv\Scripts\activate     # Windows
-```
-
-3. Installer les dépendances :
-```bash
+python -m venv .venv && .venv\Scripts\activate
 pip install -r requirements.txt
-```
-
-## Utilisation Locale
-
-Lancer l'application Streamlit :
-```bash
 streamlit run app.py
 ```
 
@@ -153,7 +172,6 @@ L'application est optimisée pour le déploiement cloud :
 - Chargement différé des visualisations
 
 ## Licence
-Ce projet est sous licence MIT.
 
 ## Contact
 Pour questions ou suggestions, ouvrir une issue sur le repository GitHub.
