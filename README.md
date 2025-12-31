@@ -7,6 +7,8 @@
 
 **Application en ligne**: [customer-segmentation-project-591h.onrender.com](https://customer-segmentation-project-591h.onrender.com/)
 
+[![Guide](https://img.shields.io/badge/Documentation-Guide_Utilisateur-purple?logo=bookstack&logoColor=white)](GUIDE_UTILISATEUR.md)
+
 ---
 
 ## Contexte Business
