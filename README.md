@@ -13,7 +13,7 @@
 
 ## Contexte Business
 
-Solution d'analytics retail transformant les donnees transactionnelles en insights clients actionnables via segmentation automatisee et recommandations intelligentes.
+Solution d’analytics retail qui transforme les données transactionnelles en segments clients dynamiques et en recommandations opérationnelles, permettant d’optimiser le ciblage marketing, la fidélisation et le chiffre d’affaires.
 
 **Valeur Business:**
 - Identification de la valeur client via scoring RFM
