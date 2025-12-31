@@ -8,6 +8,8 @@ Ce guide presente les fonctionnalites du tableau de bord pour vous aider a explo
 
 **Lien**: [customer-segmentation-project-591h.onrender.com](https://customer-segmentation-project-591h.onrender.com/)
 
+> **Note**: L'application est hebergee sur le plan gratuit de Render. Le premier chargement peut prendre 30 a 60 secondes si le serveur est en veille.
+
 ---
 
 ## 1. Synthese Executive
