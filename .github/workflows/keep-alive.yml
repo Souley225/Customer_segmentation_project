@@ -1,0 +1,19 @@
+name: Keep Render Alive
+
+on:
+  schedule:
+    # Ping toutes les 14 minutes
+    - cron: '*/14 * * * *'
+  workflow_dispatch: # Exécution manuelle possible
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render App
+        run: |
+          curl -sf https://customer-segmentation-project-591h.onrender.com/ \
+            --max-time 30 \
+            -o /dev/null \
+            -w "Status: %{http_code}\n" \
+            || echo "Ping failed, app may be starting up"
